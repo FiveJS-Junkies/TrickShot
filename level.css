@@ -1,0 +1,51 @@
+#back-button 
+ {
+    position: fixed;
+    top: 80%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    padding: 10px 45px; 
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px; 
+    color: white;
+    background: #25e675;
+    transition: 1s;
+    box-shadow: 6px 6px 0 black;
+    transform: skewX(-15deg);
+    align-items: center;
+}
+
+
+
+#back-button:hover {
+    transform: skewX(-15deg) scale(1.2);
+}
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#level1-button,
+#level2-button,
+#level3-button {
+    width: 200px;
+    padding: 10px 45px; /* Adjust padding as needed */
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px; /* Adjust the font size as needed */
+    color: white;
+    background: #25e675;
+    transition: 1s;
+    box-shadow: 6px 6px 0 black;
+    transform: skewX(-15deg);
+    margin-top: 50px;
+    align-items: center;
+}
+
+#level1-button:hover,
+#level2-button:hover,
+#level3-button:hover {
+    transform: skewX(-15deg) scale(1.2);
+}

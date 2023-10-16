@@ -14,6 +14,10 @@ document.getElementById('about-button').addEventListener('click', function () {
     window.location.href = 'about.html';
 });
 
+document.getElementById('level-button').addEventListener('click', function () {
+    window.location.href = 'level.html';
+});
+
 const backgroundMusic = new Audio('music/menusong.mp3');
 backgroundMusic.loop = true;
 

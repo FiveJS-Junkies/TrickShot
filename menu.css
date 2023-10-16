@@ -34,7 +34,8 @@ h1 {
 
 #controls-button,
 #settings-button,
-#about-button {
+#about-button,
+#level-button {
     width: 200px;
     padding: 10px 45px; /* Adjust padding as needed */
     text-decoration: none;
@@ -51,14 +52,16 @@ h1 {
 
 #controls-button i,
 #settings-button i,
-#about-button i {
+#about-button i ,
+#level-button i{
     margin-right: 10px; /* Add spacing between icon and text */
 }
 
 
 #controls-button:hover,
 #settings-button:hover,
-#about-button:hover {
+#about-button:hover,
+#level-button:hover {
     transform: skewX(-15deg) scale(1.2);
 }
 

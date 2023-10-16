@@ -1,0 +1,12 @@
+#minimap {
+    position: absolute; /* absolute to allow for a div in a div */
+    top: 10px; /* Adjust the top position as needed */
+    right: 10px; /* Adjust the right position as needed */
+    width: 300px; /* Adjust the width as needed */
+    height: 200px; /* Adjust the height as needed */
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    /* Additional styles for the minimap */
+}
+
+/* The above code just sets up a box to put the game inside and within the bigger canvas game */
