@@ -1,4 +1,16 @@
 /* Apply styles to the back button */
+
+body {
+    background: linear-gradient(to bottom, #ee7ed6, #ffffff);
+    background-size: cover;
+    background-attachment: fixed;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-family: 'Guava-Candy', sans-serif;
+}
+
 #back-button {
     position: fixed;
     top: 80%;
@@ -11,14 +23,16 @@
     font-size: 20px;
     color: white;
     background: #25e675;
-    transition: 1s;
+    transition: transform 0.5s, background 0.5s; /* Adjusted transition properties */
     box-shadow: 6px 6px 0 black;
     transform: skewX(-15deg);
     align-items: center;
+    display: inline-block; /* Center the button horizontally */
 }
 
 #back-button:hover {
-    transform: skewX(-15deg) scale(1);
+    transform: skewX(-15deg) scale(1.1); /* Improved the hover effect */
+    background: #1ca960; /* Change background color on hover */
 }
 
 /* Apply styles to the controls container */
@@ -55,6 +69,7 @@
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
+
 
 
 
