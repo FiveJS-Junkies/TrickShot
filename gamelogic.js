@@ -83,4 +83,18 @@ minimapRenderer.shadowMap.type = THREE.VSMShadowMap;
 minimapRenderer.toneMapping = THREE.ACESFilmicToneMapping;
 minimapContainer.appendChild(minimapRenderer.domElement);
 
-export { scene,camera,renderer,stats, onWindowResize, minicamera, minimapRenderer};
+function updateMiniCameraPosition(playerCollider) {
+    const playerPosition = playerCollider.end;
+    minicamera.position.copy(playerPosition);
+    minicamera.position.y = 20; // Adjust the height (20) as needed
+    playerPositionIndicator.position.copy(playerPosition);
+}
+
+const playerPositionIndicator = new THREE.Mesh(
+    new THREE.CircleGeometry(0.25, 32), // You can adjust the size of the dot
+    new THREE.MeshBasicMaterial({ color: 0x000000 })
+);
+playerPositionIndicator.rotation.x = -Math.PI / 2; // Lay the dot flat
+scene.add(playerPositionIndicator);
+
+export { scene,camera,renderer,stats, onWindowResize, minicamera, minimapRenderer, updateMiniCameraPosition};

@@ -3,7 +3,7 @@ import { Octree } from 'three/examples/jsm/math/Octree.js';
 import { Capsule } from 'three/examples/jsm/math/Capsule.js';
 
 import { playJumpSound,playTargetHitSound, playLevelCompleteSound,playBackgroundMusic,stopBackgroundMusic} from './audio';
-import { scene,camera,renderer,stats,onWindowResize, minicamera, minimapRenderer } from './gamelogic';
+import { scene,camera,renderer,stats,onWindowResize, minicamera, minimapRenderer,updateMiniCameraPosition } from './gamelogic';
 import  {updateTimerDisplay } from './timer';
 import { createSpheres,spheresCollisions } from './sphere';
 import { loadMap } from './map';
@@ -206,7 +206,6 @@ document.body.addEventListener( 'mousemove', ( event ) => {
         camera.rotation.y -= event.movementX / storedMouseSpeed; //mouse speed default is 500
 
         // Minimap camera rotation 
-        minicamera.rotation.z -= event.movementX / storedMouseSpeed; 
     }
 
 } );
@@ -515,6 +514,7 @@ function animate() {
             updatePlayer( deltaTime );
             updateSpheres( deltaTime );
             teleportPlayerIfOob(camera,playerCollider,playerDirection);
+            updateMiniCameraPosition(playerCollider);
     
         }
     }
