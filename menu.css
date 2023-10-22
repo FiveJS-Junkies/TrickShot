@@ -7,29 +7,50 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     color: #fff;
-    
+    overflow: hidden;
+}
+#background-video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: -1; /* Send the video to the background */
 }
 
 .menu-container {
-    text-align: center;
-    padding: 100px ;
+    position: relative;
+    z-index: 1; /* Bring the menu container to the front */
+    padding: 100px;
 }
 
 h1 {
     font-size: 36px;
-    margin-bottom: 30px;
+    margin-top: 80px;
+    margin-bottom: 50px;
 }
 
 
 .menu-buttons {
+    position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: rgba(32, 42, 68, 0.9);
+    padding: 40px;
+    width: 20%;
+    height: 200vh;
+    left: 100px; /* Adjust as needed */
+    top: 0; /* Adjust as needed */
 }
 
 .menu-buttons .icon-button  {
     display: flex;
     align-items: center;
+
 }
 
 #controls-button,
@@ -167,7 +188,7 @@ path.two {
     right: 0;
     margin-bottom: 20px; 
 	margin-right: 20px; 
-	
+
 }
 
 .switch-label {

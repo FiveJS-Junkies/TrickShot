@@ -60,7 +60,7 @@ body {
 #hud-container {
   position: absolute;
   top: 10%; /* Center vertically */
-  left: 50%; /* Center horizontally */
+  left: 200%; /* Center horizontally */
   transform: translate(-50%, -50%);
   color: white;
   background: rgba(98, 37, 230, 0.9);

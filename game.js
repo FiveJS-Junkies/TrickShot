@@ -41,7 +41,7 @@ const levelComplete = new Audio(listener);
 audioLoader.load('music/jump.mp3', (buffer) => {
     jumpSound.setBuffer(buffer);
     jumpSound.setLoop(false);
-    jumpSound.setVolume(storedSEVolume); // Adjust the volume as needed
+    jumpSound.setVolume(storedSEVolume -0,2); // Adjust the volume as needed
 });
 
 audioLoader.load('music/targetActivatesfx.mp3', (buffer) => {
@@ -145,7 +145,11 @@ const SPHERE_RADIUS = 0.2;
 const STEPS_PER_FRAME = 5;
 
 const sphereGeometry = new THREE.IcosahedronGeometry( SPHERE_RADIUS, 5 );
-const sphereMaterial = new THREE.MeshLambertMaterial( { color: 0xdede8d } );
+
+const textureLoader = new THREE.TextureLoader();
+const texture = textureLoader.load('Textures/ballTexture.jpg');
+
+const sphereMaterial = new THREE.MeshLambertMaterial( { map: texture } );
 
 sphereMaterial.side = THREE.DoubleSide;//piece of code added so that the ball appears in air from top view
 //you can see it slightly
@@ -164,7 +168,12 @@ for ( let i = 0; i < NUM_SPHERES; i ++ ) {
     spheres.push( {
         mesh: sphere,
         collider: new THREE.Sphere( new THREE.Vector3( 0, - 100, 0 ), SPHERE_RADIUS ),
-        velocity: new THREE.Vector3()
+        velocity: new THREE.Vector3(),
+        rotationSpeed: new THREE.Vector3(
+            Math.random() * 0.02,
+            Math.random() * 0.02,
+            Math.random() * 0.02
+        ),
     } );
 
 }
@@ -609,10 +618,6 @@ function changeModel(target){
 }
 
 
-
-
-
-
 function spheresCollisions() {
 
     for ( let i = 0, length = spheres.length; i < length; i ++ ) {
@@ -655,6 +660,7 @@ let count = 0
 function updateSpheres( deltaTime ) {
    // const windForce = new THREE.Vector3(0.5, 0, 0);
     spheres.forEach( sphere => {
+        
 
         sphere.collider.center.addScaledVector( sphere.velocity, deltaTime );
        // sphere.velocity.add(windForce);
