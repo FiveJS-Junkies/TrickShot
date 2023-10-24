@@ -94,6 +94,10 @@ button:hover {
   transform: skewX(-15deg) scale(1.2);
 }
 
+#minimap{
+  border: 2px solid white;
+}
+
 button {
   width: 200px;
   justify-content: center;

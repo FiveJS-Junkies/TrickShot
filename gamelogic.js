@@ -84,9 +84,16 @@ minimapRenderer.toneMapping = THREE.ACESFilmicToneMapping;
 minimapContainer.appendChild(minimapRenderer.domElement);
 
 function updateMiniCameraPosition(playerCollider) {
-    const playerPosition = playerCollider.end;
+   const playerPosition = playerCollider.end;
+   const minPosition = new THREE.Vector3(-2, 20, -34.595107629588924);
+const maxPosition = new THREE.Vector3(6, 20, 34.595107629588924);
+
+
+    // Limit the minicamera's position
     minicamera.position.copy(playerPosition);
-    minicamera.position.y = 20; // Adjust the height (20) as needed
+    minicamera.position.clamp(minPosition, maxPosition);
+
+   
     playerPositionIndicator.position.copy(playerPosition);
 }
 
