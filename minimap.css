@@ -1,7 +1,7 @@
 #minimap {
     position: absolute; /* absolute to allow for a div in a div */
     top: 10px; /* Adjust the top position as needed */
-    right: 10px; /* Adjust the right position as needed */
+    left: 10px; /* Adjust the right position as needed */
     width: 300px; /* Adjust the width as needed */
     height: 200px; /* Adjust the height as needed */
     background-color: rgba(0, 0, 0, 0.5);

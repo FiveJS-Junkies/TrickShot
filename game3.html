@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Game</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="game.css">
+    <link type="text/css" rel="stylesheet" href="minimap.css"> <!-- FOR MINI MAP -->
+    <link type="text/css" rel="stylesheet" href="loading.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;700&display=swap" rel="stylesheet"> <!-- for loading screen -->
+
+    <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet">
+</head>
+<body>
+<div id="loadingOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background-color:black; z-index:9999;">
+    <div id="loadingScreen"> <!-- loadingoverlay has the following div elements and is styled by loading.css -->
+        <div class="bouncing-ball"></div>
+        <div class="center-line"></div>
+        <p class="info">Hit all the targets within the time limit to beat the level.</p>
+        <p class="info2">Exploration of this map grants a reward</p>
+        <p class="hint-text">Hint: Loading hint...</p>
+        <p class="good-luck">Good luck</p>
+    </div>
+</div>
+
+<div id="game-container"></div> <!-- Add this div for the main game -->
+<div id="minimap"></div> <!-- Add this div for the minimap -->
+<div id="timer"></div>
+<div id="crosshair"></div>
+<video id="video" autoplay loop>
+    <source src="textures/rickroll.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<div id="expanding-circle"></div>
+<div id="pause-box"></div>
+<div id="circle-inner"></div>
+<div id="circle-outer"></div>
+<div id="hud-container">
+    <div id="balls-left">Balls: 25</div>
+    <div id="circular-container">
+        <img src="./images/Target_Image.png" alt="Your Image" id="image-inside-circle">
+    </div>
+    <div id="targets-left">Targets:10</div>
+</div>
+
+
+<div id="level-finish" style="display: none;">
+    <h1 id = "endScreen-Heading" style="color: white">Level 3 Complete</h1>
+    <button id="next-level-btn">Next Level</button>
+    <button id="resume-btn">Resume</button>
+    <button id="restart-btn">Restart</button>
+    <button id="exit-btn">Exit to Menu</button>
+    <div>
+        <h2 id = "thanks-Heading" style="display: none; color: white; margin-top: 80px; font-size: 40px; letter-spacing: 2px">Thanks for playing</h2>
+    </div>
+
+</div>
+
+<div id="circular-container2" style="display: none;">
+    <div id = "msg" style="color: white">Achievement: Get RickRolled!</div>
+</div>
+
+
+<script async src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"></script>
+<script>  /* GENERATING RANDOM HINT MESSAGES FOR THE HINT TEXT */
+// When the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", function() {
+    // An array of random messages
+    const messages = [
+        "&#x1F4A1; Hint: Running gives the ball more momentum before it is shot.",
+        "&#x1F4A1; Hint: Timing is crucial when hitting the targets.",
+        "&#x1F4A1; Hint: The higher you aim, the farther the ball will travel.",
+        "&#x1F4A1; Hint: Balls can bounce of objects, you can hit multiple targets at once."
+    ];
+
+    // Select the hint-text element
+    const hintTextElement = document.querySelector(".hint-text");
+
+    // Generate a random index
+    const randomIndex = Math.floor(Math.random() * messages.length);
+
+    // Set the content of the hint-text element to a random message
+    hintTextElement.innerHTML = messages[randomIndex];
+});
+</script>
+
+<script type="module" src="game3.js"></script>
+
+</body>
+</html>

@@ -8,12 +8,17 @@
     <link href='https://unpkg.com/css.gg@2.0.0/icons/css/keyboard.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://unpkg.com/css.gg@2.0.0/icons/css/info.css' rel='stylesheet'>
+    <link href='https://unpkg.com/css.gg@2.0.0/icons/css/games.css' rel='stylesheet'>
     <title>Menu</title>
 </head>
 <body>
+    <video id="background-video" autoplay loop muted>
+        <source src="videos/backgroundVideo.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
     <div class="menu-container">
-        <h1>Welcome to the Game</h1>
         <div class="menu-buttons">
+            <img src="images/menuHead.png" alt="Trick Shot Image">
             <button id="play-button">
                 <span>Start</span>
                 <span>
@@ -39,7 +44,7 @@
                 About
             </button>
             <button id="level-button" class="icon-button">
-                <i class="gg-info"></i>
+                <i class="gg-games"></i>
                 Levels
             </button>
         </div>
@@ -53,6 +58,10 @@
             <input type="checkbox" id="music">
             <label for="music"></label>
         </div>
+    </div>
+
+    <div id="circular-container2" >
+        <div id = "msg" style="color: white">Full Screen Recommended: F11</div>
     </div>
     <script src="menu.js"></script>
 </body>

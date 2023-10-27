@@ -1,164 +1,168 @@
 import * as THREE from 'three';
-import Stats from 'three/addons/libs/stats.module.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { Octree } from 'three/addons/math/Octree.js';
-import { OctreeHelper } from 'three/addons/helpers/OctreeHelper.js';
-import { Capsule } from 'three/addons/math/Capsule.js';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import { Octree } from 'three/examples/jsm/math/Octree.js';
+import { Capsule } from 'three/examples/jsm/math/Capsule.js';
 
-import { Audio, AudioLoader, AudioListener } from 'three';
+import { playJumpSound,playTargetHitSound, playLevelCompleteSound,playBackgroundMusic,stopBackgroundMusic} from './audio';
+import { scene,camera,renderer,onWindowResize, minicamera, minimapRenderer,updateMiniCameraPosition } from './gamelogic';
+import  {updateTimerDisplay } from './timer';
+import { createSpheres,spheresCollisions } from './sphere';
+import { loadMap } from './map';
+import { createRedTarget ,changeGreenTarget} from './targets';
+import {teleportPlayerIfOob,getForwardVector, getSideVector,playerSphereCollision} from './player';
 
-// Create an audio listener and add it to the camera
+const container = document.getElementById( 'game-container' );
+const nextLevelButton = document.getElementById('next-level-btn');
+const endScreenHeading = document.getElementById("endScreen-Heading");
+const crosshair = document.getElementById('crosshair');
+const innerCircle = document.getElementById('circle-inner');
+const outerCircle = document.getElementById('circle-outer');
+const levelFinishScreen = document.getElementById('level-finish');
+const restartButton = document.getElementById('restart-btn');
+const exitButton = document.getElementById('exit-btn');
+const resumeButton = document.getElementById('resume-btn');
+let hudContainer = document.getElementById('hud-container');
+let hudElements = document.querySelectorAll('#balls-left, #targets-left');
+const expandingCircle = document.getElementById("expanding-circle");
+let pauseElement = document.getElementById('pause-box');
+pauseElement.style.display = 'none';
+
+playBackgroundMusic();
 
 const clock = new THREE.Clock();
+let initialTime = 50; // Change the time here
+let remainingTime = initialTime; // Remaining time is initially the same as the initial time
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color( 0x88ccee );
-scene.fog = new THREE.Fog( 0x88ccee, 0, 50 );
+updateTimerDisplay(remainingTime); // Display the initial time
 
-/* NORMAL CAMERA */
-const camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.rotation.order = 'YXZ';
-const listener = new AudioListener();
-camera.add(listener);
+const timerInterval = setInterval(updateTimer, 1000); // Update every second
 
-// Load an audio file (adjust the path to your audio file)
-const audioLoader = new AudioLoader();
-const collisionSound  = new Audio(listener);
+function updateTimer() {
+    if (remainingTime === initialTime) {
+        document.body.requestPointerLock();
+        let overlay = document.getElementById('loadingOverlay');
+        overlay.style.display = 'none';
+    }
 
-audioLoader.load('music/ballcollision.mp3', (buffer) => {
-  collisionSound.setBuffer(buffer);
-  collisionSound.setLoop(false);
-  collisionSound.setVolume(0.5); // Adjust the volume as needed
-});
+    if (!paused) {
+        remainingTime--;
+        updateTimerDisplay(remainingTime);
 
-const jumpSound  = new Audio(listener);
-audioLoader.load('music/jump.mp3', (buffer) => {
-    jumpSound.setBuffer(buffer);
-    jumpSound.setLoop(false);
-    jumpSound.setVolume(0.5); // Adjust the volume as needed
-});
-
-/* MINIMAP CAMERA */
-// Define the orthographic camera's properties
-// These 4 affect height of camera
-const width = window.innerWidth;
-const height = window.innerHeight;
-
-const left = -width / 150;
-const right = width / 150;
-const top = height / 150;
-const bottom = -height / 150;
-
-const near = 0.1;
-const far = 1000;
-const minicamera = new THREE.OrthographicCamera(left, right, top, bottom, near, far);
-// Set the camera's position above the scene
-minicamera.position.set(0, 10, 0); // Adjust the height (10) as needed
-// Rotate the camera to look straight down
-minicamera.rotation.set(-Math.PI/2, 0, 0);
-
-const fillLight1 = new THREE.HemisphereLight( 0x8dc1de, 0x00668d, 1.5 );
-fillLight1.position.set( 2, 1, 1 );
-scene.add( fillLight1 );
-
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-directionalLight.position.set( - 5, 25, - 1 );
-directionalLight.castShadow = true;
-directionalLight.shadow.camera.near = 0.01;
-directionalLight.shadow.camera.far = 500;
-directionalLight.shadow.camera.right = 30;
-directionalLight.shadow.camera.left = - 30;
-directionalLight.shadow.camera.top	= 30;
-directionalLight.shadow.camera.bottom = - 30;
-directionalLight.shadow.mapSize.width = 1024;
-directionalLight.shadow.mapSize.height = 1024;
-directionalLight.shadow.radius = 4;
-directionalLight.shadow.bias = - 0.00006;
-scene.add( directionalLight );
-
-
-const container = document.getElementById( 'fps-container' );
-const minimapContainer = document.getElementById('minimap');
-// In your game.js file
-
-
-const renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.VSMShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-container.appendChild( renderer.domElement );
-
-// We need to give the minimap its own renderrer
-/* 
-    Merely doing this for line 69: minimapContainer.appendChild( renderer.domElement ); 
-    ont work as it will choose to render the game in this last container only
-*/
-
-const minimapRenderer = new THREE.WebGLRenderer({ antialias: true });
-minimapRenderer.setPixelRatio(window.devicePixelRatio);
-minimapRenderer.setSize(minimapContainer.clientWidth, minimapContainer.clientHeight); //COPIES GAME SIZE TO THE CONTAINER SIZE FOR FULL DISPLAY
-minimapRenderer.shadowMap.enabled = true;
-minimapRenderer.shadowMap.type = THREE.VSMShadowMap;
-minimapRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-minimapContainer.appendChild(minimapRenderer.domElement);
-
-const stats = new Stats();
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.top = '0px';
-container.appendChild( stats.domElement );
-
-const GRAVITY = 9.8;
-
-const NUM_SPHERES = 20;
-const SPHERE_RADIUS = 0.2;
-
-const STEPS_PER_FRAME = 5;
-
-const sphereGeometry = new THREE.IcosahedronGeometry( SPHERE_RADIUS, 5 );
-const sphereMaterial = new THREE.MeshLambertMaterial( { color: 0xdede8d } );
-
-sphereMaterial.side = THREE.DoubleSide;//piece of code added so that the ball appears in air from top view
-//you can see it slightly
-
-const spheres = [];
-let sphereIdx = 0;
-
-for ( let i = 0; i < NUM_SPHERES; i ++ ) {
-
-    const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-    sphere.castShadow = true;
-    sphere.receiveShadow = true;
-
-    scene.add( sphere );
-
-    spheres.push( {
-        mesh: sphere,
-        collider: new THREE.Sphere( new THREE.Vector3( 0, - 100, 0 ), SPHERE_RADIUS ),
-        velocity: new THREE.Vector3()
-    } );
-
+        if (remainingTime <= 0) {
+            showLevelFinishScreen();
+        }
+    }
 }
 
+let glbMap = 'Map0.glb'; //Change Map here
 const worldOctree = new Octree();
+loadMap(glbMap,scene,worldOctree,animate);
+
+let targetsLeft = 10; //Change number of targets here
+let target1, target2, target3, target4, target5, target6, target7, target8, target9, target10; //Update based on targets 
+
+/**
+ * Update here as well based on targets 
+ */
 const targetOctree = new Octree();
-const fanOctree = new Octree();
+const targetOctree1 = new Octree();
+const targetOctree2 = new Octree();
+const targetOctree3 = new Octree();
+const targetOctree4 = new Octree();
+const targetOctree5 = new Octree();
+const targetOctree6 = new Octree();
+const targetOctree7 = new Octree();
+const targetOctree8 = new Octree();
+const targetOctree9 = new Octree();
+const targetOctree10 = new Octree();
 
-const playerCollider = new Capsule( new THREE.Vector3( 0, 0.35, 0 ), new THREE.Vector3( 0, 1, 0 ), 0.35 );
+/**
+ * Update here as well based on targets 
+ */
+createRedTarget(scene,16.7, 0, -15.4, 0, Math.PI/2, 0, 1, 1, 1, targetOctree1)
+    .then((loadedTarget) => {
+        target1 = loadedTarget;
+    })
+    .catch((error) => {
+    });
 
+createRedTarget(scene,-3.43, -0.62, -20.29, 0, Math.PI/2, 0, 1, 1, 1, targetOctree2)
+    .then((loadedTarget) => {
+        target2 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+createRedTarget(scene,-12.026, -0.62, 3.3, 0, 0, 0, 0.9, 0.9, 0.9, targetOctree3)
+    .then((loadedTarget) => {
+        target3 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+createRedTarget(scene,16.2, 0, -2.38, 0, 0, 0, 1, 1, 1, targetOctree4)
+    .then((loadedTarget) => {
+        target4 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+
+createRedTarget(scene,6.7288, -1.323, 12.95, 0, Math.PI/2, 0, 1, 1, 1, targetOctree5)
+    .then((loadedTarget) => {
+        target5 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+createRedTarget(scene,6.45, -0.6202, -7.4107, 0, Math.PI/2, 0, 1, 1, 1, targetOctree6)
+    .then((loadedTarget) => {
+        target6 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+createRedTarget(scene,-12.55, -0.62, -9.8018, 0, 0, 0, 1, 1, 1, targetOctree7)
+    .then((loadedTarget) => {
+        target7 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+
+createRedTarget(scene,-11.73, 0.1486, -16.35, 0, Math.PI/2, 0, 1, 1, 1, targetOctree8)
+    .then((loadedTarget) => {
+        target8 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+
+createRedTarget(scene,-4.83, -1.3, -10.31, 0, Math.PI/2, 0, 0.8, 0.8, 0.8, targetOctree9)
+    .then((loadedTarget) => {
+        target9 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+
+createRedTarget(scene,-1.009, 0, 13.5, 0, Math.PI/2, 0, 0.9, 0.9, 0.9, targetOctree10)
+    .then((loadedTarget) => {
+        target10 = loadedTarget;
+    })
+    .catch((error) => {
+    });
+
+
+const NUM_SPHERES = 25; //Change number of spheres here
+let ballsLeft = 25; //Update based on number of spheres
+const spheres = [];   
+let sphereIdx = 0;
+createSpheres(scene, NUM_SPHERES, spheres );
+
+
+const playerCollider = new Capsule( new THREE.Vector3( -1, 3, -5 ), new THREE.Vector3( -1, 4, -5 ), 0.35 );
 const playerVelocity = new THREE.Vector3();
 const playerDirection = new THREE.Vector3();
-
 let playerOnFloor = false;
-let mouseTime = 0;
-
+let allowPlayerMovement = true;
+let paused = false;
+let levelCompleted = false;
 const keyStates = {};
-
-const vector1 = new THREE.Vector3();
-const vector2 = new THREE.Vector3();
-const vector3 = new THREE.Vector3();
+let storedMouseSpeed = localStorage.getItem('MouseSpeed');
+let mouseTime = 0;
+let count = 0
 
 document.addEventListener( 'keydown', ( event ) => {
 
@@ -173,6 +177,9 @@ document.addEventListener( 'keyup', ( event ) => {
 } );
 
 container.addEventListener( 'mousedown', () => {
+    if (!allowPlayerMovement) {
+        return; // If player movement is not allowed, exit the function
+    }
 
     document.body.requestPointerLock();
 
@@ -181,6 +188,9 @@ container.addEventListener( 'mousedown', () => {
 } );
 
 document.addEventListener( 'mouseup', () => {
+    if (!allowPlayerMovement) {
+        return; 
+    }
 
     if ( document.pointerLockElement !== null ) throwBall();
 
@@ -188,55 +198,189 @@ document.addEventListener( 'mouseup', () => {
 
 document.body.addEventListener( 'mousemove', ( event ) => {
 
+    if (!allowPlayerMovement) {
+        return;
+    }
+
     if (document.pointerLockElement === document.body) {
         // Limit how far down the camera can look (adjust the values as needed)
-        // Normal FPS camera
-        camera.rotation.x -= event.movementY / 500;
-        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x)); // Clamp the rotation
-        camera.rotation.y -= event.movementX / 500;
+        camera.rotation.x -= event.movementY / storedMouseSpeed; //mouse speed default is 500
+        camera.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, camera.rotation.x)); 
+        camera.rotation.y -= event.movementX / storedMouseSpeed; //mouse speed default is 500
 
-        // Minimap camera rotation 
-        minicamera.rotation.z -= event.movementX / 500; 
-        // Because the camera is set to point down we need to rotate along z axis
-}
+    }
 
 } );
 
-window.addEventListener( 'resize', onWindowResize );
+function controls( deltaTime ) {
 
-function onWindowResize() {
+    if (!allowPlayerMovement) {
+        return;
+    }
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    const speedDelta = deltaTime * ( playerOnFloor ? 25 : 4 );
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    if ( keyStates[ 'KeyW' ] ) {
+
+        playerVelocity.add( getForwardVector(camera,playerDirection).multiplyScalar( speedDelta ) );
+
+    }
+
+    if ( keyStates[ 'KeyS' ] ) {
+
+        playerVelocity.add( getForwardVector(camera,playerDirection).multiplyScalar( - speedDelta ) );
+
+    }
+
+    if ( keyStates[ 'KeyA' ] ) {
+
+        playerVelocity.add( getSideVector(camera,playerDirection).multiplyScalar( - speedDelta ) );
+
+    }
+
+    if ( keyStates[ 'KeyD' ] ) {
+
+        playerVelocity.add( getSideVector(camera,playerDirection).multiplyScalar( speedDelta ) );
+
+    }
+    if ( keyStates[ 'KeyP' ] ) {
+        showPauseScreen();
+    }
+
+    if ( playerOnFloor ) {
+
+        if ( keyStates[ 'Space' ] ) {
+            playJumpSound();
+            playerVelocity.y = 5;
+        }
+
+    }
 
 }
-let ballsLeft = 20;
+
+function showLevelFinishScreen() {
+
+    hudContainer.style.width = '20px'; // Adjust the width as needed
+
+    hudElements.forEach(element => {
+        element.style.opacity = '0'; // Adjust the opacity as needed
+    });
+
+    setTimeout(() => {
+        expandingCircle.classList.add("expand");
+    }, 1000);
+
+    if (levelCompleted){
+        playLevelCompleteSound();
+    }
+    stopBackgroundMusic();
+    levelFinishScreen.style.display = 'block';
+    setTimeout(() => {
+        levelFinishScreen.style.opacity = '1';
+    }, 1000);
+    allowPlayerMovement = false;
+    document.exitPointerLock();
+
+    clearInterval(timerInterval);
+
+
+    if (levelCompleted) {
+        endScreenHeading.textContent = 'Level 1 Complete';
+        nextLevelButton.style.display = 'block';
+        resumeButton.style.display = 'none';
+        crosshair.style.display = 'none';
+        innerCircle.style.display = 'none';
+        outerCircle.style.display = 'none';
+    }
+    else if (remainingTime <= 0 || ballsLeft ===0) {
+        nextLevelButton.style.display = 'none';
+        resumeButton.style.display = 'none';
+        endScreenHeading.textContent = 'You Lost';
+        crosshair.style.display = 'none';
+        innerCircle.style.display = 'none';
+        outerCircle.style.display = 'none';
+
+    }
+}
+
+function showPauseScreen() {
+        stopBackgroundMusic();
+        levelFinishScreen.style.display = 'block';
+    levelFinishScreen.style.opacity = '1';
+        pauseElement.style.display = 'block';
+        allowPlayerMovement = false;
+        document.exitPointerLock();
+        paused = true;
+
+        nextLevelButton.style.display = 'none';
+        endScreenHeading.textContent = 'Game Paused';
+        crosshair.style.display = 'none';
+        innerCircle.style.display = 'none';
+        outerCircle.style.display = 'none';
+}
+
+
+function hideLevelFinishScreen() {
+    pauseElement.style.display = 'none';
+    levelFinishScreen.style.opacity = '0';
+    crosshair.style.display = 'block';
+    innerCircle.style.display = 'block';
+    outerCircle.style.display = 'block';
+    levelFinishScreen.style.display = 'none';
+    allowPlayerMovement = true;
+    document.body.requestPointerLock();
+    playBackgroundMusic();
+    paused = false;
+
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    restartButton.addEventListener('click', () => {
+        window.location.href = 'game.html';
+    });
+
+    nextLevelButton.addEventListener('click', () => {
+        window.location.href = 'game2.html';
+    });
+
+    exitButton.addEventListener('click', () => {
+        window.location.href = 'menu.html';
+    });
+
+    resumeButton.addEventListener('click', () => {
+        hideLevelFinishScreen();
+    });
+
+});
 
 function throwBall() {
 
     if (ballsLeft > 0) {
-                const sphere = spheres[sphereIdx];
+        const sphere = spheres[sphereIdx];
 
-                camera.getWorldDirection(playerDirection);
+        camera.getWorldDirection(playerDirection);
 
 
-                sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
+        sphere.collider.center.copy(playerCollider.end).addScaledVector(playerDirection, playerCollider.radius * 1.5);
 
         // throw the ball with more force if we hold the button longer, and if we move forward
-                const impulse = 15 + 30 * (1 - Math.exp((mouseTime - performance.now()) * 0.001));
+        const impulse = 15 + 30 * (1 - Math.exp((mouseTime - performance.now()) * 0.001));
 
-                sphere.velocity.copy(playerDirection).multiplyScalar(impulse);
-                sphere.velocity.addScaledVector(playerVelocity, 2);
+        sphere.velocity.copy(playerDirection).multiplyScalar(impulse);
+        sphere.velocity.addScaledVector(playerVelocity, 2);
 
-                sphereIdx = (sphereIdx + 1) % spheres.length;
+        sphereIdx = (sphereIdx + 1) % spheres.length;
 
-        // Decrease the balls left count and update the display
                 ballsLeft--;
-                document.getElementById('balls-left').innerText = `Balls left: ${ballsLeft}`;
+                document.getElementById('balls-left').innerText = `Balls: ${ballsLeft}`;
         }
-
+        if (ballsLeft === 0) {
+            showLevelFinishScreen();
+        }
+            
 }
 
 function playerCollisions() {
@@ -282,9 +426,8 @@ function updatePlayer( deltaTime ) {
 
     if ( ! playerOnFloor ) {
 
-        playerVelocity.y -= GRAVITY * deltaTime;
+        playerVelocity.y -= 9.8 * deltaTime;
 
-        // small air resistance
         damping *= 0.1;
 
     }
@@ -299,451 +442,108 @@ function updatePlayer( deltaTime ) {
     camera.position.copy( playerCollider.end );//MOVING CAMERA MAINSCREEN
 
     minicamera.position.copy( playerCollider.end );//MOVING PLAYER ON MINIMAP
+    console.log('Player position:', playerCollider.end);
+
 
 }
 
-function playerSphereCollision( sphere ) {
-
-    const center = vector1.addVectors( playerCollider.start, playerCollider.end ).multiplyScalar( 0.5 );
-
-    const sphere_center = sphere.collider.center;
-
-    const r = playerCollider.radius + sphere.collider.radius;
-    const r2 = r * r;
-
-    // approximation: player = 3 spheres
-
-    for ( const point of [ playerCollider.start, playerCollider.end, center ] ) {
-
-        const d2 = point.distanceToSquared( sphere_center );
-
-        if ( d2 < r2 ) {
-
-            const normal = vector1.subVectors( point, sphere_center ).normalize();
-            const v1 = vector2.copy( normal ).multiplyScalar( normal.dot( playerVelocity ) );
-            const v2 = vector3.copy( normal ).multiplyScalar( normal.dot( sphere.velocity ) );
-
-            playerVelocity.add( v2 ).sub( v1 );
-            sphere.velocity.add( v1 ).sub( v2 );
-
-            const d = ( r - Math.sqrt( d2 ) ) / 2;
-            sphere_center.addScaledVector( normal, - d );
-
-        }
-
-    }
-
-}
-
-
-function targetCreate(posx, posy, posz, rotx, roty, rotz, scalx, scaly, scalz, octree) {
-    return new Promise((resolve, reject) => {
-        const targetLoader = new GLTFLoader().setPath('./models/gltf/');
-        let target;
-
-        targetLoader.load('target.glb', (gltf) => {
-            target = gltf.scene;
-            target.position.set(posx, posy, posz);
-            target.rotation.set(rotx, roty, rotz);
-            target.scale.set(scalx, scaly, scalz);
-            scene.add(target);
-
-            octree.fromGraphNode(target);
-
-            target.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    if (child.material.map) {
-                        child.material.map.anisotropy = 4;
-                    }
-                }
-            });
-
-            const helper = new OctreeHelper(octree);
-            helper.visible = false;
-            scene.add(helper);
-
-            target.modelChanged = false;
-
-            resolve(target); // Resolve the promise with the loaded model
-        }, undefined, (error) => {
-            reject(error); // Reject the promise if there's an error during loading
-        });
-    });
-}
-
-// ...
-
-// Usage of targetCreate with promises
-let target1, target2;
-
-// Create a new octree for each target
-const targetOctree1 = new Octree();
-const targetOctree2 = new Octree();
-
-targetCreate(0, 0, 10, 0, 0, 0, 1, 1, 1, targetOctree1)
-    .then((loadedTarget) => {
-        target1 = loadedTarget;
-    })
-    .catch((error) => {
-    });
-
-targetCreate(3, 0, 7, 0, 0, 0, 1, 1, 1, targetOctree2)
-    .then((loadedTarget) => {
-        target2 = loadedTarget;
-    })
-    .catch((error) => {
-    });
-
-
-function changeModel(target){
-    const targetHitLoader = new GLTFLoader().setPath('./models/gltf/');
-    let targetHit
-
-    targetHitLoader.load('targetHit.glb', (gltf) => {
-
-        targetHit = gltf.scene
-
-        targetHit.position.copy(target.position);
-        targetHit.rotation.copy(target.rotation);
-        targetHit.scale.copy(target.scale);
-        scene.add( targetHit );
-
-        targetOctree.fromGraphNode( targetHit );
-
-        targetHit.traverse( child => {
-
-            if ( child.isMesh ) {
-
-                child.castShadow = true;
-                child.receiveShadow = true;
-
-                if ( child.material.map ) {
-
-                    child.material.map.anisotropy = 4;
-
-                }
-
-            }
-
-        } );
-
-        const helper = new OctreeHelper( targetOctree );
-        helper.visible = false;
-        scene.add(helper)
-
-        target.traverse((child) => {
-            if (child.isMesh) {
-                child.geometry.dispose();
-                child.material.dispose();
-            }
-        });
-
-
-    });
-}
-
-
-
-
-
-
-function spheresCollisions() {
-
-    for ( let i = 0, length = spheres.length; i < length; i ++ ) {
-
-        const s1 = spheres[ i ];
-
-        for ( let j = i + 1; j < length; j ++ ) {
-
-            const s2 = spheres[ j ];
-
-            const d2 = s1.collider.center.distanceToSquared( s2.collider.center );
-            const r = s1.collider.radius + s2.collider.radius;
-            const r2 = r * r;
-
-            if ( d2 < r2 ) {
-
-                const normal = vector1.subVectors( s1.collider.center, s2.collider.center ).normalize();
-                const v1 = vector2.copy( normal ).multiplyScalar( normal.dot( s1.velocity ) );
-                const v2 = vector3.copy( normal ).multiplyScalar( normal.dot( s2.velocity ) );
-
-                s1.velocity.add( v2 ).sub( v1 );
-                s2.velocity.add( v1 ).sub( v2 );
-
-                const d = ( r - Math.sqrt( d2 ) ) / 2;
-
-                s1.collider.center.addScaledVector( normal, d );
-                s2.collider.center.addScaledVector( normal, - d );
-
-            }
-
-        }
-
-    }
-
-}
-
-
-let count = 0
+/**
+ * Update this function as well based on targets 
+ */
 function updateSpheres( deltaTime ) {
-
+   // const windForce = new THREE.Vector3(0.5, 0, 0);
     spheres.forEach( sphere => {
 
         sphere.collider.center.addScaledVector( sphere.velocity, deltaTime );
-
+       // sphere.velocity.add(windForce);
         const result = worldOctree.sphereIntersect( sphere.collider );
-        const fanResult = fanOctree.sphereIntersect( sphere.collider );
         const resultTarget1 = targetOctree1.sphereIntersect( sphere.collider );
         const resultTarget2 = targetOctree2.sphereIntersect( sphere.collider );
+        const resultTarget3 = targetOctree3.sphereIntersect( sphere.collider );
+        const resultTarget4 = targetOctree4.sphereIntersect( sphere.collider );
+        const resultTarget5 = targetOctree5.sphereIntersect( sphere.collider );
+        const resultTarget6 = targetOctree6.sphereIntersect( sphere.collider );
+        const resultTarget7 = targetOctree7.sphereIntersect( sphere.collider );
+        const resultTarget8 = targetOctree8.sphereIntersect( sphere.collider );
+        const resultTarget9 = targetOctree9.sphereIntersect( sphere.collider );
+        const resultTarget10 = targetOctree10.sphereIntersect( sphere.collider );
+
+        const resultTargets = [
+            resultTarget1, resultTarget2, resultTarget3, resultTarget4, resultTarget5,
+            resultTarget6, resultTarget7, resultTarget8, resultTarget9, resultTarget10
+          ];
+
+          const Targets = [
+              target1, target2, target3, target4, target5,
+              target6, target7, target8, target9, target10
+          ];
+          
+          for (let i = 0; i < 10; i++) {
+              const currentResult = resultTargets[i];
+              const currentTarget = Targets[i];
+          
+              if (currentResult) {
+                  if (currentTarget.modelChanged === false) {
+                      playTargetHitSound();
+                      count++;
+                      targetsLeft--;
+                      document.getElementById('targets-left').innerText = `Targets: ${targetsLeft}`;
+                      currentTarget.modelChanged = true;
+                      if (!levelCompleted && targetsLeft === 0) {
+                          levelCompleted = true;
+                          showLevelFinishScreen();
+                      }
+                  }
+          
+                  changeGreenTarget(scene,targetOctree, currentTarget);
+                  sphere.velocity.addScaledVector(currentResult.normal, -currentResult.normal.dot(sphere.velocity) * 1.5);
+                  sphere.collider.center.add(currentResult.normal.multiplyScalar(currentResult.depth));
+              }
+          }
 
         if ( result ) {
 
             sphere.velocity.addScaledVector(result.normal, -result.normal.dot(sphere.velocity) * 1.5);
             sphere.collider.center.add(result.normal.multiplyScalar(result.depth));
         }
-        else if ( resultTarget1 ) {
-            if (target1.modelChanged === false){
-                count++
-                target1.modelChanged = true
-                console.log(count)
-            }
-            changeModel(target1)
-            sphere.velocity.addScaledVector(resultTarget1.normal, -resultTarget1.normal.dot(sphere.velocity) * 1.5);
-            sphere.collider.center.add(resultTarget1.normal.multiplyScalar(resultTarget1.depth));
-        }
-        else if ( resultTarget2 ) {
-            if (target2.modelChanged === false){
-                count++
-                target2.modelChanged = true
-                console.log(count)
-            }
-
-            changeModel(target2)
-            sphere.velocity.addScaledVector( resultTarget2.normal, - resultTarget2.normal.dot( sphere.velocity ) * 1.5 );
-            sphere.collider.center.add( resultTarget2.normal.multiplyScalar( resultTarget2.depth ) );
-        }        
-        else if ( fanResult ) {
-            // Play the collision sound only if it's not already playing
-            collisionSound.play();
-            console.log('Sphere hit blades');
-            //Complete the bounce off the fan
-            sphere.velocity.addScaledVector( fanResult.normal, - fanResult.normal.dot( sphere.velocity ) * 1.5 );
-            sphere.collider.center.add( fanResult.normal.multiplyScalar( fanResult.depth ) );
-
-        }
+        
         else{
-            sphere.velocity.y -= GRAVITY * deltaTime;
+            sphere.velocity.y -= 9.8 * deltaTime;
         }
-
-
 
         const damping = Math.exp( - 1.5 * deltaTime ) - 1;
         sphere.velocity.addScaledVector( sphere.velocity, damping );
 
-        playerSphereCollision( sphere );
+        playerSphereCollision( sphere,playerCollider,playerVelocity );
 
     } );
 
-    spheresCollisions();
+    spheresCollisions(spheres);
     for ( const sphere of spheres ) {
 
         sphere.mesh.position.copy( sphere.collider.center );
-        // customTarget.checkCollision(sphere.collider);
 
     }
 
 }
 
-
-function getForwardVector() {
-
-    camera.getWorldDirection( playerDirection );
-    playerDirection.y = 0;
-    playerDirection.normalize();
-
-    return playerDirection;
-
-}
-
-function getSideVector() {
-
-    camera.getWorldDirection( playerDirection );
-    playerDirection.y = 0;
-    playerDirection.normalize();
-    playerDirection.cross( camera.up );
-
-    return playerDirection;
-
-}
-
-function controls( deltaTime ) {
-
-    // gives a bit of air control
-    const speedDelta = deltaTime * ( playerOnFloor ? 25 : 4 );
-
-    if ( keyStates[ 'KeyW' ] ) {
-
-        playerVelocity.add( getForwardVector().multiplyScalar( speedDelta ) );
-
-    }
-
-    if ( keyStates[ 'KeyS' ] ) {
-
-        playerVelocity.add( getForwardVector().multiplyScalar( - speedDelta ) );
-
-    }
-
-    if ( keyStates[ 'KeyA' ] ) {
-
-        playerVelocity.add( getSideVector().multiplyScalar( - speedDelta ) );
-
-    }
-
-    if ( keyStates[ 'KeyD' ] ) {
-
-        playerVelocity.add( getSideVector().multiplyScalar( speedDelta ) );
-
-    }
-
-    if ( playerOnFloor ) {
-
-        if ( keyStates[ 'Space' ] ) {
-            jumpSound.play();
-            playerVelocity.y = 5;
-            
-
-        }
-
-    }
-
-}
-
-let blades;
-
-const fanloader = new GLTFLoader().setPath( './models/gltf/' );
-
-fanloader.load( 'fan.glb', ( gltf ) => {
-    blades = gltf.scene.getObjectByName('blades');
-
-    const assets = {
-        blades
-    };
-    //if (blades) blades.position.y = 5;
-    scene.add( gltf.scene );
-
-    fanOctree.fromGraphNode( gltf.scene );
-
-    gltf.scene.traverse( child => {
-
-        if ( child.isMesh ) {
-
-            child.castShadow = true;
-            child.receiveShadow = true;
-
-            if ( child.material.map ) {
-
-                child.material.map.anisotropy = 4;
-
-            }
-
-        }
-
-    } );
-
-    const helper = new OctreeHelper( fanOctree );
-    helper.visible = false;
-    scene.add( helper );
-
-    animate();
-
-} );
-
-
-
-const loader = new GLTFLoader().setPath( './models/gltf/' );
-
-loader.load( 'collision-world.glb', ( gltf ) => {
-
-    scene.add( gltf.scene );
-
-    worldOctree.fromGraphNode( gltf.scene );
-
-    gltf.scene.traverse( child => {
-
-        if ( child.isMesh ) {
-
-            child.castShadow = true;
-            child.receiveShadow = true;
-
-            if ( child.material.map ) {
-
-                child.material.map.anisotropy = 4;
-
-            }
-
-        }
-
-    } );
-
-    const helper = new OctreeHelper( worldOctree );
-    helper.visible = false;
-    scene.add( helper );
-
-    animate();
-
-} );
-
-
-function teleportPlayerIfOob() {
-
-    if ( camera.position.y <= - 25 ) {
-
-        playerCollider.start.set( 0, 0.35, 0 );
-        playerCollider.end.set( 0, 1, 0 );
-        playerCollider.radius = 0.35;
-        camera.position.copy( playerCollider.end );
-        camera.rotation.set( 0, 0, 0 );
-
-    }
-
-}
-let fanRotation = 0;
 function animate() {
 
-    const deltaTime = Math.min( 0.05, clock.getDelta() ) / STEPS_PER_FRAME;
-    // we look for collisions in substeps to mitigate the risk of
-    // an object traversing another too quickly for detection.
+    const deltaTime = Math.min( 0.05, clock.getDelta() ) / 5;
 
-    for ( let i = 0; i < STEPS_PER_FRAME; i ++ ) {
+    if(!paused){
+        for ( let i = 0; i < 5; i ++ ) {
+            controls( deltaTime );
+            updatePlayer( deltaTime );
+            updateSpheres( deltaTime );
+            teleportPlayerIfOob(camera,playerCollider,playerDirection);
+            updateMiniCameraPosition(playerCollider,glbMap);
 
-        controls( deltaTime );
-
-        updatePlayer( deltaTime );
-
-        updateSpheres( deltaTime );
-
-        teleportPlayerIfOob();
-
-
+        }
     }
 
-    // if (blades) {
-    //     fanRotation += 0.003; // Adjust the rotation speed as needed
-    //     blades.rotation.z = fanRotation;
-    // }
-
-    
-
     renderer.render( scene, camera );
-    
-    minimapRenderer.render(scene, minicamera);//RENDER SAME SCREEN BUT DIFF CAMERA PERSPECTIVE FOR THE MINIMAP
-
-    stats.update();
-
+    minimapRenderer.render(scene, minicamera)
+    onWindowResize();
     requestAnimationFrame( animate );
-
 }
-
-

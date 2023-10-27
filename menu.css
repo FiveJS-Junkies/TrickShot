@@ -2,34 +2,55 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-image: url('images/menu-wallpaper.jpg'); /* Replace 'your-wallpaper.jpg' with the actual path to your JPG image */
+    background-color: #262b3f;
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
     color: #fff;
-    
+    overflow: hidden;
+}
+#background-video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: -1; /* Send the video to the background */
 }
 
 .menu-container {
-    text-align: center;
-    padding: 100px ;
+    position: relative;
+    z-index: 1; /* Bring the menu container to the front */
+    padding: 100px;
 }
 
 h1 {
     font-size: 36px;
-    margin-bottom: 30px;
+    margin-top: 80px;
+    margin-bottom: 50px;
 }
 
 
 .menu-buttons {
+    position: absolute;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: rgba(32, 42, 68, 0.9);
+    padding: 40px;
+    width: 20%;
+    height: 200vh;
+    left: 100px; /* Adjust as needed */
+    top: 0 ; /* Adjust as needed */
 }
 
 .menu-buttons .icon-button  {
     display: flex;
     align-items: center;
+
 }
 
 #controls-button,
@@ -37,12 +58,12 @@ h1 {
 #about-button,
 #level-button {
     width: 200px;
-    padding: 10px 45px; /* Adjust padding as needed */
+    padding: 10px 45px;
     text-decoration: none;
     font-family: 'Poppins', sans-serif;
     font-size: 20px; /* Adjust the font size as needed */
     color: white;
-    background: #25e675;
+    background: rgb(255, 210, 66, 0.80);
     transition: 1s;
     box-shadow: 6px 6px 0 black;
     transform: skewX(-15deg);
@@ -85,7 +106,7 @@ h1 {
 }
 #play-button:hover {
     transition: 0.5s;
-    box-shadow: 10px 10px 0 #FBC638;
+    box-shadow: 10px 10px 0 rgb(255, 210, 66, 0.80);
 }
 
 #play-button span:nth-child(2) {
@@ -99,7 +120,7 @@ h1 {
 }
 
 span {
-    transform: skewX(15deg);
+    transform: skewX(-10deg);
 }
 
 span:nth-child(2) {
@@ -154,9 +175,9 @@ path.two {
     padding: 10px ;
     border-radius: 10px;
 	border: #555 solid 1px;
-    background-color:rgba(245, 0, 143, 0.7) ;
+    background-color:rgba(255, 210, 66, 0.80) ;
 	box-shadow: 	
-	inset 8px 8px 15px rgba(245, 0, 143, 0.7),
+	inset 8px 8px 15px rgb(255, 210, 66, 0.80),
 	inset 10px 10px 10px rgba(126, 121, 121, 0.3);
     justify-content: space-between;
     align-items: center;
@@ -167,7 +188,7 @@ path.two {
     right: 0;
     margin-bottom: 20px; 
 	margin-right: 20px; 
-	
+
 }
 
 .switch-label {
@@ -218,7 +239,37 @@ font-size: 13px;
 .switch-toggle input[type="checkbox"]:checked + label::before {
     left: 45%;
     content: '';
-    background-color: #1eaed2;
+    background-color: #ffffff;
 
 }
 
+#circular-container2 {
+    position: absolute;
+    top: 90%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%);
+    color: white;
+    background: rgba(98, 37, 230, 0.4);
+    transition: opacity 5s;
+    opacity: 1;
+    padding: 5px 10px;
+    text-align: center;
+    font-family: 'Games', sans-serif;
+    width: 380px;
+    height: 50px;
+    border-radius: 90px;
+    z-index: 5;
+  }
+  
+  .circular-opacity-transition {
+      opacity: 1
+  }
+
+  #msg {
+    margin-top: 14px;
+    font-size: 20px;
+    font-family: 'Games', sans-serif;
+
+
+  }
+  

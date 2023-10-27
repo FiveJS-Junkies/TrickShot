@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @font-face {
     font-family: 'Guava-Candy';
     src: url('fonts/Guava-Candy.ttf') format('truetype');
@@ -6,35 +7,58 @@
 
 body {
     background: linear-gradient(to bottom, #ee7ed6, #ffffff);
+=======
+body {
+    background:  #202A44E6;
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
     background-size: cover;
     background-attachment: fixed;
     text-align: center;
     margin: 0;
+<<<<<<< HEAD
     padding: 0;
+=======
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
     color: white;
 }
 
 .controls-container {
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
     padding-top: 30px;
+=======
+    padding-top: 10px;
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
     align-items: center;
 
 }
 
 .title {
+<<<<<<< HEAD
     font-family: 'Guava-Candy', sans-serif;
     font-size: 80px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     letter-spacing: 5px;
     -webkit-text-fill-color: #f9a856;
     -webkit-text-stroke: 1px white;
+=======
+    font-family: 'Games', sans-serif;
+    font-size: 105px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 5px;
+    -webkit-text-fill-color: #ffffff;
+    padding: 0;
+    margin-bottom: 0; /* Add this line to remove margin at the bottom */
+
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
 }
 
 
 
 .container {
     width: 40%;
+<<<<<<< HEAD
     border-collapse: collapse;
     padding-left: 60px;
     padding-right: 60px;
@@ -44,32 +68,71 @@ body {
     border-radius: 10px;
     color: #fff;
     box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+=======
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-top: 80px;
+    padding-bottom: 50px;
+    /*background: #91e16a;*/
+    /*border-radius: 10px;*/
+    /*color: #fff;*/
+    /*box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);*/
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
 
 }
 table {
     width: 100%;
     border-collapse: collapse;
+<<<<<<< HEAD
     margin-bottom: 20px;
+=======
+    background-color: rgba(32, 42, 68, 0.9);
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
 }
 
 th, td {
     padding: 10px;
+<<<<<<< HEAD
     border: 1px solid #ddd;
 }
 
 th {
     background-color: #333;
     color: #fff;
+=======
+    border: 2px solid rgba(0,0,0,0.5);
+    font-size: 18px;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+}
+
+th {
+    background-color: rgba(32, 42, 68, 0.9);
+    -webkit-text-fill-color:  rgb(255, 210, 66, 0.8);
+    font-size: 40px;
+    letter-spacing: 2px;
+    font-family: 'Games', sans-serif;
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
 }
 
 strong {
     font-weight: bold;
 }
+<<<<<<< HEAD
 #back-button 
  {
     cursor: pointer;
 
     margin-top: 100px;
+=======
+#back-button
+{
+    cursor: pointer;
+    margin-top: 67px;
+    position: fixed;
+    top: 80%;
+    left: 45%;
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
     transform: translate(-50%, -50%);
     width: 200px;
     padding: 10px 45px; 
@@ -77,10 +140,20 @@ strong {
     font-family: 'Poppins', sans-serif;
     font-size: 20px; 
     color: rgb(0, 0, 0);
+<<<<<<< HEAD
     background: #b5ecfe;
     transition: 1s;
     box-shadow: 6px 6px 0 black;
     transform: skewX(-15deg);
+=======
+    background: rgb(255, 210, 66, 0.8);
+    transition: 1s;
+    box-shadow: 6px 6px 0 black;
+    transform: skewX(-15deg);
+    align-items: center;
+    -webkit-text-fill-color: #ffffff;
+
+>>>>>>> 5fa8a1ce4776c72bd6d2c8c985fbf17fae9fac56
 }
 
 

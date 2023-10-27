@@ -1,0 +1,184 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  
+  #container {
+    position: absolute; /* to allow for div in a div */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Ensure the container is behind other elements */
+  }
+  
+  #balls-left {
+    position: absolute;
+    top: 1%;
+    left: 1%;
+    font-size: 25px;
+    color: white;
+    transition: 1s;
+    transform: skewX(-15deg);
+    padding: 25px 50px;
+    text-align: center;
+    font-family: 'Games', sans-serif;
+  }
+
+#targets-left {
+  position: absolute;
+  top: 1%;
+  right: 0.01%;
+  font-size: 25px;
+  color: white;
+  transition: 1s;
+  transform: skewX(-15deg);
+  padding: 25px 50px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+}
+
+
+#timer {
+  position: absolute;
+  top: 10%; /* Center vertically */
+  left: 80%;
+  font-size: 25px;
+  transform: translate(-50%, -50%) ;
+  color: white;
+  background: #6225E6;
+  transition: 2s;
+  box-shadow: 6px 6px 0 black;
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+
+}
+
+#hud-container {
+  position: absolute;
+  top: 10%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%);
+  color: white;
+  background: rgba(98, 37, 230, 0.9);
+  transition: 2s;
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+  width: 480px;
+  height: 70px;
+  border-radius: 90px;
+}
+
+
+
+#level-finish {
+  font-family: 'Games', sans-serif;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background-color: rgba(175, 174, 174, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  height: 400px;
+  width: 400px;
+}
+
+button:hover {
+  transform: skewX(-15deg) scale(1.2);
+}
+
+button {
+  width: 200px;
+  justify-content: center;
+  padding: 10px 3px; /* Adjust padding as needed */
+  display: flex;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px; /* Adjust the font size as needed */
+  color: white;
+  background: #6225E6;
+  transition: 1s;
+  box-shadow: 6px 6px 0 black;
+  transform: skewX(-15deg);
+  margin-top: 50px;
+  margin-left:100px;
+  align-items: center;
+}
+
+#circular-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px; /* Adjust the width and height as needed */
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(98, 37, 230, 0.9);
+}
+
+#image-inside-circle {
+  width: 100%; /* Make the image fill the circular container */
+  height: 100%;
+  object-fit: cover; /* Preserve aspect ratio and cover the container */
+  border-radius: 50%;
+}
+
+
+
+#crosshair {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  top: 50%; /* Position in the center of the screen */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the crosshair */
+  pointer-events: none; /* Ensure it doesn't interfere with game interaction */
+  z-index: 1; /* Ensure it's displayed above the game canvas */
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 2px;
+  background-color: white; /* Adjust color as needed */
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+#crosshair::before {
+  transform: translateX(-50%) translateY(-50%) rotate(90deg);
+}
+
+#circle-outer {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid white; /* Adjust color and thickness as needed */
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#circle-inner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white; /* Adjust color as needed */
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

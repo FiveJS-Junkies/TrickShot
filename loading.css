@@ -1,0 +1,174 @@
+/* loading.css */
+
+/* Ensure the iframe takes up the entire screen */
+#gameIframe {
+    width: 100%;
+    height: 100vh;
+    border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Ensure it's above the loading content */
+}
+
+/* Style for your loading screen */
+#loadingScreen {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column; /* stack children vertically */
+    justify-content: center;
+    align-items: center;
+    background-color: #202A44E6; /* or any desired background color */
+    color: purple;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2; /* Ensure it's above the iframe */
+}
+
+.loader {
+    border: 16px solid #ffd918;  /* Light grey */
+    border-top: 16px solid #6616c2;  /* Blue */
+    border-radius: 50%;  /* Circular shape */
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ... [Your previous CSS styles] ... */
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateX(-50vw) translateY(0);
+    }
+    10% {
+        transform: translateX(calc(-40vw + 10%)) translateY(-120px);
+    }
+    20% {
+        transform: translateX(calc(-30vw + 20%)) translateY(0);
+    }
+    30% {
+        transform: translateX(calc(-20vw + 30%)) translateY(-110px);
+    }
+    40% {
+        transform: translateX(calc(-10vw + 40%)) translateY(0);
+    }
+    50% {
+        transform: translateX(50%) translateY(-100px);
+    }
+    60% {
+        transform: translateX(calc(10vw + 60%)) translateY(0);
+    }
+    70% {
+        transform: translateX(calc(20vw + 70%)) translateY(-90px);
+    }
+    80% {
+        transform: translateX(calc(30vw + 80%)) translateY(0);
+    }
+    90% {
+        transform: translateX(calc(40vw + 90%)) translateY(-80px);
+    }
+    
+}
+
+.center-line {
+    position: absolute;
+    bottom: 13%;             /* Places it at the vertical center */
+    left: 0;              /* Starts at the leftmost edge */
+    width: 100%;          /* Spans the entire width of the viewport */
+    height: 2px;          /* Adjust this for the desired thickness of the line */
+    background-color: white;
+    z-index: 3;           /* Adjust if needed, to ensure it's above other elements */
+}
+
+
+.bouncing-ball {
+    width: 25px;
+    height: 25px;
+    background-color: #7910e2;
+    border-radius: 50%;
+    animation: bounce 4s infinite;
+    position: absolute;
+    bottom: 13%;  /* Adjust this value as per your needs */
+    left: 50%;  /* Centers the ball horizontally on the screen */
+}
+
+.info, .good-luck {
+    position: absolute;
+    width: 80%; /* Adjust as needed */
+    left: 10%; /* Centers the text based on the width above */
+    text-align: center;
+    font-size: 38px; /* Adjust as needed */
+    color: #edcf0d; /* White color for readability against darker backgrounds */
+    font-family: Arial, sans-serif; /* Default font, can be changed */
+    margin: 0; /* Remove default margins */
+}
+
+.info, .info2, .info3 {
+    font-family: 'Playpen Sans', serif; /* Using Playfair Display as the primary font and serif as a fallback */
+}
+
+
+.info {
+    position: absolute;
+    width: 80%; /* Adjust as needed */
+    left: 10%; /* Centers the text based on the width above */
+    text-align: center;
+    font-size: 48px; /* Adjust as needed */
+    color: #ffffff; /* White color for readability against darker backgrounds */  
+    margin: 0; /* Remove default margins */
+    padding-left: 30px; /* To accommodate the bullet point and provide some space */
+    bottom: 70%; /* Position from the bottom of the screen. Adjust as needed */
+    font-family: 'Games', sans-serif;
+}
+.info2 {
+    position: absolute;
+    width: 80%; /* Adjust as needed */
+    left: 10%; /* Centers the text based on the width above */
+    text-align: center;
+    font-size: 42px; /* Adjust as needed */
+    color: #ffffff; /* White color for readability against darker backgrounds */   
+    margin: 0; /* Remove default margins */
+    padding-left: 30px; /* To accommodate the bullet point and provide some space */
+    bottom: 60%; /* Position from the bottom of the screen. Adjust as needed */
+    font-family: 'Games', sans-serif;
+
+}
+.info3 {
+    position: absolute;
+    width: 80%; /* Adjust as needed */
+    left: 10%; /* Centers the text based on the width above */
+    text-align: center;
+    font-size: 37px; /* Adjust as needed */
+    color: #ffffff; /* White color for readability against darker backgrounds */
+    margin: 0; /* Remove default margins */
+    padding-left: 30px; /* To accommodate the bullet point and provide some space */
+    bottom: 50%; /* Position from the bottom of the screen. Adjust as needed */
+    font-family: 'Games', sans-serif;
+}
+
+.hint-text {
+    position: absolute;
+    font-size: 24px; /* Adjust the font size as needed */
+    color: #7910e2;  /* Light gray color for the hint text */
+    font-style: italic; /* Make it italic for emphasis */
+    text-align: center; /* Center-align the text */
+    bottom: 39%;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.good-luck {
+    bottom: 15%; /* Position from the bottom of the screen. Adjust as needed */
+    font-size: 120px; /* A bit larger to emphasize */
+    font-weight: bold; /* Bold for emphasis */
+    font-family: 'Games', serif;
+    letter-spacing: 5px;
+    padding-bottom: 90px;
+}

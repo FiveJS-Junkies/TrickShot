@@ -2,12 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="https://fonts.cdnfonts.com/css/games" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="settings.css">
     <title>Settings</title>
 </head>
 <body>
-    <button id="back-button">Back</button>
+    <div class="settings-container">
+        <h1 class="title">Settings</h1>
+
+        <div class="container">
+            <div class="setting">
+                <h2>Sound Effects Volume</h2>
+                <div class="slider-container">
+                    <input type="range" id="SEVolume-slider" min="0" max="1" step="0.1">
+                    <span id="SEVolume-value">5</span>
+                </div>
+            </div>
+
+            <div class="setting">
+                <h2>Mouse Speed</h2>
+                <div class="slider-container">
+                    <input type="range" id="MouseSpeed-slider" min="100" max="1100" step="100">
+                    <span id="MouseSpeed-value">50</span>
+                </div>
+            </div>
+
+            <div class="setting">
+                <h2>Background Volume</h2>
+                <div class="slider-container">
+                    <input type="range" id="BackgroundVolume-slider" min="0" max="0.2" step="0.01">
+                    <span id="BackgroundVolume-value">10</span>
+                </div>
+            </div>
+
+            <div class="setting">
+                <h2>FOV</h2>
+                <div class="slider-container">
+                    <input type="range" id="FOV-slider" min="50" max="100" step="5">
+                    <span id="FOV-value">75</span>
+                </div>
+            </div>
+        </div>
+        
+        <button id="back-button">Back</button>
+    </div>
+
     <script src="settings.js"></script>
 </body>
 </html>

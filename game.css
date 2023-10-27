@@ -16,14 +16,241 @@ body {
   
   #balls-left {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 18px;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 5px 10px;
-    border-radius: 5px;
+    top: 1%;
+    left: 1%;
+    font-size: 25px;
+    color: white;
+    transition: 1s;
+    transform: skewX(-15deg);
+    padding: 25px 50px;
     text-align: center;
+    font-family: 'Games', sans-serif;
   }
-  
+
+#targets-left {
+  position: absolute;
+  top: 1%;
+  right: 0.01%;
+  font-size: 25px;
+  color: white;
+  transition: 1s;
+  transform: skewX(-15deg);
+  padding: 25px 50px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+}
+
+#minimap {
+  border: 2px solid white;
+}
+
+
+#timer {
+  position: absolute;
+  top: 10%; /* Center vertically */
+  left: 80%;
+  font-size: 25px;
+  transform: translate(-50%, -50%) ;
+  color: white;
+  background: #6225E6;
+  transition: 7s;
+  box-shadow: 6px 6px 0 black;
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+
+}
+
+#hud-container {
+  position: absolute;
+  top: 10%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%);
+  color: white;
+  background: rgba(98, 37, 230, 0.9);
+  transition: width 2s; /* Change transition property to only affect width and set duration to 1 second */
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+  width: 480px;
+  height: 70px;
+  border-radius: 90px;
+  z-index: 5;
+}
+
+
+.hud-width-transition {
+  width: 20px; /* Set the width you want the HUD to transition to */
+}
+
+#expanding-circle {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: rgba(32, 42, 68, 0.9);  transition: width 5s, height 5s;
+  z-index: 1; /* Make sure it's above other elements */
+}
+
+#expanding-circle.expand {
+  width: 1080vw; /* Expand to full viewport width */
+  height: 1920vh; /* Expand to full viewport height */
+}
+
+#balls-left,
+#targets-left {
+  transition: opacity 1s; /* Adding opacity transition to individual elements */
+  opacity: 1;
+}
+
+#pause-box {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1080vw;
+  height: 1920vh;
+  border-radius: 50%;
+  background-color: rgba(32, 42, 68, 0.9);
+}
+
+
+
+#level-finish {
+  font-family: 'Games', sans-serif;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  transition: opacity 3s;
+  opacity: 0;
+  height: 400px;
+  width: 400px;
+  z-index: 10;
+}
+
+
+button:hover {
+  transform: skewX(-15deg) scale(1.2);
+}
+
+button {
+  width: 200px;
+  justify-content: center;
+  padding: 10px 3px; /* Adjust padding as needed */
+  display: flex;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px; /* Adjust the font size as needed */
+  color: white;
+  background: rgb(255, 210, 66, 0.8);
+  transition: 1s;
+  box-shadow: 6px 6px 0 black;
+  transform: skewX(-15deg);
+  margin-top: 50px;
+  margin-left:100px;
+  align-items: center;
+}
+
+#circular-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px; /* Adjust the width and height as needed */
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(98, 37, 230, 0.9);
+}
+
+
+#circular-container2 {
+  position: absolute;
+  top: 90%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%);
+  color: white;
+  background: rgba(98, 37, 230, 0.9);
+  transition: opacity 5s;
+  opacity: 0;
+  padding: 5px 10px;
+  text-align: center;
+  font-family: 'Games', sans-serif;
+  width: 480px;
+  height: 70px;
+  border-radius: 90px;
+  z-index: 5;
+}
+
+.circular-opacity-transition {
+    opacity: 1
+}
+
+#image-inside-circle {
+  width: 100%; /* Make the image fill the circular container */
+  height: 100%;
+  object-fit: cover; /* Preserve aspect ratio and cover the container */
+  border-radius: 50%;
+}
+
+#msg {
+  margin-top: 17px;
+  font-size: 30px;
+}
+
+#crosshair {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+  top: 50%; /* Position in the center of the screen */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the crosshair */
+  pointer-events: none; /* Ensure it doesn't interfere with game interaction */
+  z-index: 1; /* Ensure it's displayed above the game canvas */
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 2px;
+  background-color: white; /* Adjust color as needed */
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+#crosshair::before {
+  transform: translateX(-50%) translateY(-50%) rotate(90deg);
+}
+
+#circle-outer {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid white; /* Adjust color and thickness as needed */
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#circle-inner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: white; /* Adjust color as needed */
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

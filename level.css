@@ -1,5 +1,58 @@
-#back-button 
- {
+body {
+    background:  #202A44E6;
+    background-size: cover;
+    background-attachment: fixed;
+    text-align: center;
+    margin: 0;
+    color: white;
+}
+
+.level-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.title {
+    font-family: 'Games', sans-serif;
+    font-size: 105px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 5px;
+    -webkit-text-fill-color: #ffffff;
+    padding: 0;
+    margin-bottom: 0px; /* Add this line to remove margin at the bottom */
+}
+
+
+.level-button {
+    width: 220px;
+    height: 220px; /* Adjusted height to create a square shape */
+    padding: 20px; /* Increased padding for a square shape */
+    margin: 20px;
+    margin-top:170px;
+    text-decoration: none;
+    font-family: 'Games', sans-serif;
+    font-size: 40px;
+    -webkit-text-fill-color: #ffffff;
+    background: rgba(32, 42, 68, 0.9);
+    border: none;
+    border-radius: 10px; /* Adjusted border-radius for a slightly rounded square look */
+    cursor: pointer;
+    transition: 0.5s;
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+
+}
+
+.level-button:hover {
+    transform:  scale(1.1);
+    background: rgba(32, 42, 68, 0.9);
+}
+
+#back-button
+{
+    cursor: pointer;
+    margin-top: 67px;
     position: fixed;
     top: 80%;
     left: 45%;
@@ -9,43 +62,18 @@
     text-decoration: none;
     font-family: 'Poppins', sans-serif;
     font-size: 20px; 
-    color: white;
-    background: #25e675;
+    color: rgb(0, 0, 0);
+    background: rgb(255, 210, 66, 0.8);
     transition: 1s;
     box-shadow: 6px 6px 0 black;
     transform: skewX(-15deg);
     align-items: center;
+    -webkit-text-fill-color: #ffffff;
+
 }
 
 
 
 #back-button:hover {
-    transform: skewX(-15deg) scale(1.2);
-}
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-#level1-button,
-#level2-button,
-#level3-button {
-    width: 200px;
-    padding: 10px 45px; /* Adjust padding as needed */
-    text-decoration: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 20px; /* Adjust the font size as needed */
-    color: white;
-    background: #25e675;
-    transition: 1s;
-    box-shadow: 6px 6px 0 black;
-    transform: skewX(-15deg);
-    margin-top: 50px;
-    align-items: center;
-}
-
-#level1-button:hover,
-#level2-button:hover,
-#level3-button:hover {
     transform: skewX(-15deg) scale(1.2);
 }
